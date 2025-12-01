@@ -1,6 +1,6 @@
 // Supabase init
 const supabaseUrl = "https://wvbgpnepliihplacnlmp.supabase.co";
-const supabaseKey = "sb_publishable_ppGjIqWiN0IlC9JGxylOlg_Jvd_wzyY";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2YmdwbmVwbGlpaHBsYWNubG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwODU0OTUsImV4cCI6MjA2OTY2MTQ5NX0.EkTXvzCacTTqknOZhZrzBU7Ml0RzVHnrOIS2x1dRBBI";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // Popola selezione persone

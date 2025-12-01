@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu</title>
+
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+      padding: 25px;
+      background: #f7f7f7;
+      color: #000;
+      max-width: 680px;
+      margin: auto;
+    }
+
+    /* Logo */
+    .logo {
+      width: 220px;
+      margin: 0 auto 30px auto;
+      display: block;
+    }
+
+    /* Pulsante categoria */
+    .category-btn {
+      width: 100%;
+      background: #0C2B4E;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 15px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .category-btn:hover {
+      background: #0a2240;
+    }
+
+    /* Contenitore animato */
+    .category-content {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.35s ease;
+    }
+
+    .item {
+      background: #ffffff;
+      padding: 18px;
+      margin: 12px 0;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    }
+
+    .price {
+      float: right;
+      font-weight: bold;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4/dist/umd/supabase.js"></script>
+</head>
+
+<body>
+
+  <!-- LOGO -->
+  <img src="/Logo_Pescado.webp" class="logo" alt="Logo Pescado">
+
+  <div id="menu-container">Caricamento in corso...</div>
+
+  <script>
+    const SUPABASE_URL = "https://wvbgpnepliihplacnlmp.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2YmdwbmVwbGlpaHBsYWNubG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwODU0OTUsImV4cCI6MjA2OTY2MTQ5NX0.EkTXvzCacTTqknOZhZrzBU7Ml0RzVHnrOIS2x1dRBBI";
+
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function loadMenu() {
+      const container = document.getElementById("menu-container");
+
+      const { data: categories } = await client
+        .from("categorie_menu")
+        .select("*")
+        .order("ordinamento", { ascending: true });
+
+      const { data: items } = await client
+        .from("piatti")
+        .select("*")
+        .order("nome", { ascending: true });
+
+      container.innerHTML = "";
+
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn";
+        btn.textContent = cat.nome;
+
+        const content = document.createElement("div");
+        content.className = "category-content";
+
+        items
+          .filter(i => i.categoria_id === cat.id)
+          .forEach(i => {
+            const el = document.createElement("div");
+            el.className = "item";
+            el.innerHTML = `
+              <strong>${i.nome}</strong>
+              <span class="price">€ ${Number(i.prezzo).toFixed(2)}</span>
+            `;
+            content.appendChild(el);
+          });
+
+        // Animazione apertura/chiusura
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".category-content").forEach(c => {
+            if (c !== content) {
+              c.style.maxHeight = "0"; // chiudi gli altri
+            }
+          });
+
+          if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+            content.style.maxHeight = "0";
+          } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+          }
+        });
+
+        container.appendChild(btn);
+        container.appendChild(content);
+      });
+    }
+
+    loadMenu();
+  </script>
+
+</body>
+</html>

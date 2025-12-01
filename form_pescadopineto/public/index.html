@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenotazione Ristorante</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prenota un Tavolo</h1>
+
+        <form id="prenotaForm">
+            
+            <!-- Nome Cliente -->
+            <label>Nome e Cognome</label>
+            <input type="text" id="cliente_nome" required>
+
+            <!-- Selettore Persone -->
+            <label>Numero di Persone</label>
+            <div id="personeSelector" class="persone-grid"></div>
+
+            <!-- Data -->
+            <label>Data</label>
+            <input type="date" id="giorno" required>
+
+            <!-- Turno -->
+            <label>Turno</label>
+            <select id="turno" required>
+                <option value="">Seleziona...</option>
+                <option value="pranzo">Pranzo</option>
+                <option value="cena">Cena</option>
+            </select>
+
+            <!-- Orario dinamico -->
+            <label>Orario</label>
+            <select id="orario" required></select>
+
+            <button type="submit" class="btn">Invia Prenotazione</button>
+        </form>
+    </div>
+
+    <!-- Schermata Successo -->
+    <div id="successOverlay">
+        <div class="successBox">
+            <h2>🎉 Prenotazione inviata!</h2>
+            <p>Riceverai una mail quando il ristorante confermerà la tua richiesta.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>

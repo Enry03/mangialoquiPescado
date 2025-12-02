@@ -68,7 +68,7 @@ document.getElementById("prenotaForm").addEventListener("submit", async (e) => {
             cliente_nome: document.getElementById("cliente_nome").value,
             persone: personeSelezionate,
             turno: turnoSel.value,
-            stato: "in_attesa",
+            stato: "accepted",
             quando: quandoISO
     });
 

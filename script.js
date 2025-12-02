@@ -64,7 +64,7 @@ document.getElementById("prenotaForm").addEventListener("submit", async (e) => {
     const { data, error } = await supabase
         .from("prenotazioni")
         .insert({
-            ristorante_id: "…",
+            ristorante_id: "2753f121-5c1e-4b85-b1f2-9b3bde1dbc86",
             cliente_nome: document.getElementById("cliente_nome").value,
             persone: personeSelezionate,
             turno: turnoSel.value,

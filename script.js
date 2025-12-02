@@ -64,14 +64,14 @@ document.getElementById("prenotaForm").addEventListener("submit", async (e) => {
     const { data, error } = await supabase
         .from("prenotazioni")
         .insert({
-            ristorante_id: "3c235755-63cd-478d-bc56-d00e4d9c9e1b",
+            ristorante_id: "…",
             cliente_nome: document.getElementById("cliente_nome").value,
             persone: personeSelezionate,
-            giorno: giorno,
             turno: turnoSel.value,
             stato: "in_attesa",
             quando: quandoISO
-        });
+    });
+
 
     if (error) {
         console.error(error);

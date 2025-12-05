@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menu</title>
+  <title>Menù</title>
 
   <style>
     body {
@@ -17,12 +17,12 @@
 
     /* Logo */
     .logo {
-      width: 220px;
-      margin: 0 auto 30px auto;
+      width: 160px;
+      margin: 10px auto 25px;
       display: block;
     }
 
-    /* Pulsante categoria */
+    /* Category button */
     .category-btn {
       width: 100%;
       background: #0C2B4E;
@@ -35,31 +35,61 @@
       border-radius: 10px;
       text-align: left;
       cursor: pointer;
-      transition: background 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
     }
 
     .category-btn:hover {
       background: #0a2240;
     }
 
-    /* Contenitore animato */
+    .arrow {
+      transition: transform 0.35s ease;
+    }
+
+    /* Animated content section */
     .category-content {
       overflow: hidden;
       max-height: 0;
       transition: max-height 0.35s ease;
     }
 
+    /* Card piatto */
     .item {
       background: #ffffff;
-      padding: 18px;
-      margin: 12px 0;
+      padding: 20px;
+      margin: 14px 0;
       border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .item-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #0C2B4E;
+    }
+
+    .description {
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .allergens {
+      font-size: 0.85rem;
+      color: #777;
+      margin-bottom: 10px;
     }
 
     .price {
-      float: right;
       font-weight: bold;
+      font-size: 1.1rem;
+      margin-top: 5px;
     }
   </style>
 
@@ -68,8 +98,8 @@
 
 <body>
 
-  <!-- LOGO -->
-  <img src="/Logo_Pescado.webp" class="logo" alt="Logo Pescado">
+  <!-- Logo -->
+  <img src="Logo_Pescado.webp" class="logo" alt="Logo Pescado">
 
   <div id="menu-container">Caricamento in corso...</div>
 
@@ -98,7 +128,9 @@
       categories.forEach(cat => {
         const btn = document.createElement("button");
         btn.className = "category-btn";
-        btn.textContent = cat.nome;
+        btn.innerHTML = `${cat.nome} <span class="arrow">⌄</span>`;
+
+        const arrow = btn.querySelector(".arrow");
 
         const content = document.createElement("div");
         content.className = "category-content";
@@ -108,25 +140,41 @@
           .forEach(i => {
             const el = document.createElement("div");
             el.className = "item";
-            el.innerHTML = `
-              <strong>${i.nome}</strong>
-              <span class="price">€ ${Number(i.prezzo).toFixed(2)}</span>
+
+            let html = `
+              <div class="item-name">${i.nome}</div>
             `;
+
+            if (i.descrizione) {
+              html += `<div class="description">${i.descrizione}</div>`;
+            }
+
+            if (i.allergeni) {
+              html += `<div class="allergens">${i.allergeni}</div>`;
+            }
+
+            html += `<div class="price">€ ${Number(i.prezzo).toFixed(2)}</div>`;
+
+            el.innerHTML = html;
             content.appendChild(el);
           });
 
-        // Animazione apertura/chiusura
+        // Animation logic
         btn.addEventListener("click", () => {
           document.querySelectorAll(".category-content").forEach(c => {
-            if (c !== content) {
-              c.style.maxHeight = "0"; // chiudi gli altri
-            }
+            if (c !== content) c.style.maxHeight = "0";
+          });
+
+          document.querySelectorAll(".arrow").forEach(a => {
+            if (a !== arrow) a.style.transform = "rotate(0deg)";
           });
 
           if (content.style.maxHeight && content.style.maxHeight !== "0px") {
             content.style.maxHeight = "0";
+            arrow.style.transform = "rotate(0deg)";
           } else {
             content.style.maxHeight = content.scrollHeight + "px";
+            arrow.style.transform = "rotate(180deg)";
           }
         });
 

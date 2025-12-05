@@ -22,7 +22,61 @@
       display: block;
     }
 
-    /* Category button */
+    /* BOX RECENSIONI */
+    .review-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .review-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #0C2B4E;
+    }
+
+    .stars {
+      font-size: 32px;
+      cursor: pointer;
+      color: #ccc;
+      user-select: none;
+    }
+
+    .stars span.active {
+      color: #FFD700;
+    }
+
+    .review-text {
+      width: 100%;
+      padding: 10px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .review-btn {
+      margin-top: 14px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      background: #0C2B4E;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .review-btn:hover {
+      background: #0a2240;
+    }
+
+    /* PULSANTE CATEGORIA */
     .category-btn {
       width: 100%;
       background: #0C2B4E;
@@ -49,14 +103,14 @@
       transition: transform 0.35s ease;
     }
 
-    /* Animated content section */
+    /* CONTENUTO CATEGORIA */
     .category-content {
       overflow: hidden;
       max-height: 0;
       transition: max-height 0.35s ease;
     }
 
-    /* Card piatto */
+    /* CARD PIATTO */
     .item {
       background: #ffffff;
       padding: 20px;
@@ -101,6 +155,24 @@
   <!-- Logo -->
   <img src="Logo_Pescado.webp" class="logo" alt="Logo Pescado">
 
+  <!-- BOX RECENSIONI -->
+  <div class="review-box">
+    <h3>Lascia una recensione</h3>
+
+    <div id="star-container" class="stars">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+
+    <textarea id="review-text" class="review-text" placeholder="Lascia un commento (opzionale)..."></textarea>
+
+    <button class="review-btn" onclick="sendReview()">Invia</button>
+  </div>
+
+  <!-- MENU -->
   <div id="menu-container">Caricamento in corso...</div>
 
   <script>
@@ -110,18 +182,26 @@
 
     const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    /* --------- MENU ---------- */
+
     async function loadMenu() {
       const container = document.getElementById("menu-container");
 
-      const { data: categories } = await client
+      const { data: categories, error: catError } = await client
         .from("categorie_menu")
         .select("*")
         .order("ordinamento", { ascending: true });
 
-      const { data: items } = await client
+      const { data: items, error: itemError } = await client
         .from("piatti")
         .select("*")
         .order("nome", { ascending: true });
+
+      if (catError || itemError) {
+        container.innerHTML = "Errore nel caricamento del menù.";
+        console.error(catError || itemError);
+        return;
+      }
 
       container.innerHTML = "";
 
@@ -159,7 +239,7 @@
             content.appendChild(el);
           });
 
-        // Animation logic
+        // animazione apertura/chiusura
         btn.addEventListener("click", () => {
           document.querySelectorAll(".category-content").forEach(c => {
             if (c !== content) c.style.maxHeight = "0";
@@ -184,6 +264,60 @@
     }
 
     loadMenu();
+
+    /* --------- RECENSIONI ---------- */
+
+    let rating = 0;
+
+    // gestione click sulle stelle
+    document.querySelectorAll("#star-container span").forEach(span => {
+      span.addEventListener("click", () => {
+        rating = Number(span.dataset.value);
+        updateStars(rating);
+      });
+    });
+
+    function updateStars(n) {
+      document.querySelectorAll("#star-container span").forEach(s => {
+        const value = Number(s.dataset.value);
+        s.classList.toggle("active", value <= n);
+      });
+    }
+
+    async function sendReview() {
+      if (rating === 0) {
+        alert("Seleziona il numero di stelle.");
+        return;
+      }
+
+      const comment = document.getElementById("review-text").value;
+
+      // Se 4 o 5 stelle → manda su Google
+      if (rating >= 4) {
+        window.location.href = "https://www.google.com/search?q=Pescado+Pineto+recensioni";
+        return;
+      }
+
+      // 1-3 stelle → salva interna
+      const { error } = await client
+        .from("recensioni_private")
+        .insert({
+          ristorante_id: "2753f121-5c1e-4b85-b1f2-9b3bde1dbc86", // Pescado
+          stelle: rating,
+          commento: comment
+        });
+
+      if (error) {
+        console.error(error);
+        alert("Errore durante l'invio, riprova.");
+        return;
+      }
+
+      alert("Grazie! La tua recensione è stata registrata.");
+      document.getElementById("review-text").value = "";
+      rating = 0;
+      updateStars(0);
+    }
   </script>
 
 </body>
